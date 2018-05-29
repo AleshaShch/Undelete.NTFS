@@ -142,17 +142,85 @@ int getInfoAboutVolume(NTFSDrive entrie) {
 		return -1;
 	}
 
-	SetConsoleTextAttribute(hConsole, (WORD)((black << 4)| green));
+	/* typedef в данной ситуации не поможет */
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| lightBlue)); 
 	printf("General Information:\n");
-	printf("Bytes Per Cluster - %d B\n", volumeInfo.BytesPerCluster);
-	printf("Bytes Per Sector - %d B\n", volumeInfo.BytesPerSector);
-	printf("Unique number for partition - %I64d\n", volumeInfo.VolumeSerialNumber);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+	
+	printf("Bytes Per Cluster - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| lightRed));
+	printf("%d B\n", volumeInfo.BytesPerCluster);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
 
+	printf("Bytes Per Sector - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| lightRed));
+	printf("%d B\n", volumeInfo.BytesPerSector);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+	
+	printf("Unique number for partition - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| lightRed));
+	printf("%I64d\n", volumeInfo.VolumeSerialNumber);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| green));
 	printf("Information about volume size:\n");
-	printf("Volume Size - %I64d MB\n", (volumeInfo.TotalClusters.QuadPart * volumeInfo.BytesPerCluster)/ (1024 * 1024));
-	printf("Free cluster - %I64d\n", volumeInfo.FreeClusters);
-	printf("Number of sectors - %I64d\n", volumeInfo.NumberSectors);
-	printf("Number of clusters - %I64d\n", volumeInfo.TotalClusters);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
 
+	//----------------------------------------------
+	printf("Volume Size - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| yellow));
+	printf("%I64d MB\n", (volumeInfo.TotalClusters.QuadPart * volumeInfo.BytesPerCluster)/ M_BYTES);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
 
+	printf("Free cluster - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| yellow));
+	printf("%I64d \n", volumeInfo.FreeClusters);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	printf("Free space - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| yellow));
+	printf("%I64d MB (%I64d %% of drive) \n", (volumeInfo.FreeClusters.QuadPart * volumeInfo.BytesPerCluster) / M_BYTES, (volumeInfo.FreeClusters.QuadPart * PERCENT) / volumeInfo.TotalClusters.QuadPart);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	printf("Number of sectors - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| yellow));
+	printf("%I64d\n", volumeInfo.NumberSectors);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	printf("Number of clusters - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| yellow));
+	printf("%I64d \n", volumeInfo.TotalClusters);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	//----------------------------------------------
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| magenta));
+	printf("MFT Info:\n");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	printf("MFT start cluster - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| brown));
+	printf("%I64d \n", volumeInfo.MftStartLcn);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	printf("MFT Mirror start cluster - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| brown));
+	printf("%I64d \n",volumeInfo.Mft2StartLcn);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	printf("MFT size - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| brown));
+	printf("%I64d MB (%I64d %% of drive) \n", volumeInfo.MftValidDataLength.QuadPart / M_BYTES, (volumeInfo.MftValidDataLength.QuadPart / volumeInfo.BytesPerCluster * PERCENT) / volumeInfo.TotalClusters.QuadPart);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	printf("MFT zone clusters - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| brown));
+	printf("%I64d - %I64d \n", volumeInfo.MftZoneStart, volumeInfo.MftZoneEnd);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
+
+	printf("MFT zone size - ");
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| brown));
+	printf("%I64d MB (%I64d %% of drive)\n", (volumeInfo.MftZoneEnd.QuadPart - volumeInfo.MftZoneStart.QuadPart) * volumeInfo.BytesPerCluster / M_BYTES, (volumeInfo.MftZoneEnd.QuadPart - volumeInfo.MftZoneStart.QuadPart) / volumeInfo.TotalClusters.QuadPart * PERCENT);
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| brown));
+	
+	return 0;
 }

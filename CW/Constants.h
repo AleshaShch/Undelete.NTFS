@@ -3,6 +3,10 @@
 
 #include <Windows.h>
 
+#define K_BYTES 1024
+#define M_BYTES 1024 * 1024
+#define PERCENT 100
+
 enum ConsoleColor {
 	black = 0,
 	blue = 1,

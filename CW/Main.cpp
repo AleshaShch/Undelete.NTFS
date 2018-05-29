@@ -4,6 +4,7 @@
 #include "MBR.h"
 #include "GPT.h"
 #include "NTFSDrive.h"
+#include "Constants.h"
 
 #define SIZE_OF_SECTOR 512
 #define NUM_OF_ENTRIES 128 
@@ -33,6 +34,9 @@ int main(int argc, char **argv) {
 			return -1;
 		}
 	
+	/* Установка цветов консоли и текста */
+	system("color 70");
+
 	/* Вывод GUID каждого тома */
 	for (s = TEXT('a'); s < TEXT('z'); s++) {
 		drive[0] = s;
@@ -41,8 +45,7 @@ int main(int argc, char **argv) {
 		if (flForRet)   
 			printf("The GUID of drive %s is %s \n", drive, GUIDbuff);	
 	}
-	
-	
+		
 	printf("\n");
 	scanPhysicalDrive(logicalDrive);
 
