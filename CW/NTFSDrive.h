@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <windows.h>
 #include <conio.h>
+#include "ConstantsAndBasicStructures.h"
 
 #define SIZE_OF_SECTOR 512
 #define LENGTH_OF_VOLUME_PATH 4

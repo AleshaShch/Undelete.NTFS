@@ -4,10 +4,8 @@
 #include "MBR.h"
 #include "GPT.h"
 #include "NTFSDrive.h"
-#include "Constants.h"
-
-#define SIZE_OF_SECTOR 512
-#define NUM_OF_ENTRIES 128 
+#include "ConstantsAndBasicStructures.h"
+#include "MFTRecord.h"
 
 int main(int argc, char **argv) {
 	char driveLetter[2];
@@ -56,14 +54,10 @@ int main(int argc, char **argv) {
 		return -1;
 	}
 	else getInfoAboutVolume(logicalDrive[i]);
-
-	//HANDLE hDrive = CreateFile("\\\\.\\D:", GENERIC_READ, FILE_SHARE_READ, 0, OPEN_EXISTING, 0, 0);
-	//if (hDrive == INVALID_HANDLE_VALUE) { 
-		//	printf("Error %d", GetLastError());
-			//return -1;
-		//}
-	//ReadFile(hDrive, sector, SIZE_OF_SECTOR, &numOfBytesRead, 0);
-
+	
+	printf("\n");
+	readUSNJournal(logicalDrive[i]);
+	
 	return 0;
 }
 

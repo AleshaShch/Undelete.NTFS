@@ -1,6 +1,5 @@
 #include "NTFSDrive.h"
 #include "MFTRecord.h"
-#include "Constants.h"
 
 NTFSDrive init(NTFSDrive entrie, HANDLE drive, LARGE_INTEGER offset) {
 	
@@ -220,7 +219,7 @@ int getInfoAboutVolume(NTFSDrive entrie) {
 	printf("MFT zone size - ");
 	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| brown));
 	printf("%I64d MB (%I64d %% of drive)\n", (volumeInfo.MftZoneEnd.QuadPart - volumeInfo.MftZoneStart.QuadPart) * volumeInfo.BytesPerCluster / M_BYTES, (volumeInfo.MftZoneEnd.QuadPart - volumeInfo.MftZoneStart.QuadPart) / volumeInfo.TotalClusters.QuadPart * PERCENT);
-	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| brown));
+	SetConsoleTextAttribute(hConsole, (WORD)((lightGray << 4)| black));
 	
 	return 0;
 }

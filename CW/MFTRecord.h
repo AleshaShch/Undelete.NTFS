@@ -4,6 +4,9 @@
 #include <windows.h>
 #include <conio.h>
 #include <stdio.h>
+#include "NTFSDrive.h"
+
+#define BUFF_LEN 4096
 
 /* Данный файл содержит структуры, которые описывают запись MFT */
 
@@ -84,5 +87,7 @@ typedef struct MFTRecord {
 
 	// methods
 } MFTRecord;
+
+int readUSNJournal(NTFSDrive );
 
 #endif

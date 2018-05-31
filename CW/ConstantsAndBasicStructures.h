@@ -7,6 +7,9 @@
 #define M_BYTES 1024 * 1024
 #define PERCENT 100
 
+#define SIZE_OF_SECTOR 512
+#define NUM_OF_ENTRIES 128 
+
 enum ConsoleColor {
 	black = 0,
 	blue = 1,
@@ -25,5 +28,17 @@ enum ConsoleColor {
 	yellow = 14,
 	white = 15
 };
+
+typedef struct {
+  DWORDLONG UsnJournalID;
+  USN       FirstUsn;
+  USN       NextUsn;
+  USN       LowestValidUsn;
+  USN       MaxUsn;
+  DWORDLONG MaximumSize;
+  DWORDLONG AllocationDelta;
+  WORD      MinSupportedMajorVersion;
+  WORD      MaxSupportedMajorVersion;
+} USN_JOURNAL_DATA_V1_A, *PUSN_JOURNAL_DATA_V1_A;
 
 #endif
