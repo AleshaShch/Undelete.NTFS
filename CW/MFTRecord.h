@@ -4,6 +4,7 @@
 #include <windows.h>
 #include <conio.h>
 #include <stdio.h>
+#include <locale.h>
 #include "NTFSDrive.h"
 
 #define BUFF_LEN 4096
@@ -88,6 +89,16 @@ typedef struct MFTRecord {
 	// methods
 } MFTRecord;
 
-int readUSNJournal(NTFSDrive );
+typedef struct delFileInfoUsn{
+	USN usn;
+	WCHAR *fileName;
+	WORD fileNameLen;
+	DWORDLONG parentFileReferenceNumber;
+	
+	delFileInfoUsn *next;
+} delFileInfoUSN;
+
+int readUSNJournal(NTFSDrive , delFileInfoUsn **);
+char* getFullPath(HANDLE , DWORDLONG );
 
 #endif

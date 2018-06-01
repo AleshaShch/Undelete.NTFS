@@ -8,7 +8,9 @@
 #define PERCENT 100
 
 #define SIZE_OF_SECTOR 512
-#define NUM_OF_ENTRIES 128 
+#define NUM_OF_ENTRIES 128
+
+#define FULL_PATH 1024
 
 enum ConsoleColor {
 	black = 0,

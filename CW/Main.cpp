@@ -56,7 +56,9 @@ int main(int argc, char **argv) {
 	else getInfoAboutVolume(logicalDrive[i]);
 	
 	printf("\n");
-	readUSNJournal(logicalDrive[i]);
+	delFileInfoUsn *head;
+	head = NULL;
+	readUSNJournal(logicalDrive[i], &head);
 	
 	return 0;
 }
