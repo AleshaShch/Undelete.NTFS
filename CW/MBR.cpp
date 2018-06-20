@@ -10,7 +10,6 @@ int scanPhysicalDrive(NTFSDrive *logicalDrive) {
 	LARGE_INTEGER tempOffset;
 	char tempName[MAX_PATH];
 	PartitionMBR *partitionRecMBR;
-	DrivePartitionInfo drivePartition;
 	PartitionTableHeader *partitionTblHeader;
 	PartitionEntrieGPT* partEntrGPT;
 

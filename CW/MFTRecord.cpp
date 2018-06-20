@@ -125,3 +125,130 @@ char* getFullPath(HANDLE hVol, DWORDLONG fileRefNum) {
 
 	return buff;
 }
+
+int readMFTRecord(NTFSDrive entrie, delFileInfoMFT **begin) {
+	LARGE_INTEGER offsetMFT;
+	BYTE rec[SIZE_OF_REC];
+	TCHAR tempPath[MAX_PATH], tempName[5] = "FILE";
+	DWORD numOfBytesRead, nextAttr;
+	int fl = 1, flForAttr = 1, i, lengthName, flForOutput = 0, flForExit = 0, k = 0;
+	MFTBaseRecord *baseRec;
+	NTFSAttr *attr;
+	FileName *fileName;
+	delFileInfoMFT *temp, *curr;
+	
+	curr = *begin;
+	offsetMFT.QuadPart = entrie.volumeOffsetOfMFT.QuadPart;
+	
+	sprintf(tempPath, "\\\\.\\%c:", entrie.driveLetter);
+	HANDLE hVol = CreateFile( tempPath, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, NULL);
+	if (hVol == INVALID_HANDLE_VALUE) {
+		printf("Error %d", GetLastError());
+		return -1;
+	}
+
+	DWORD dwPtr = SetFilePointer(hVol, offsetMFT.LowPart, &offsetMFT.HighPart, FILE_BEGIN);
+	if (dwPtr == INVALID_SET_FILE_POINTER) {
+		printf("Error %d", GetLastError());
+		return -1;
+	}
+	
+	while (fl) {
+	memset(rec, 0, sizeof(rec));
+
+	if(!ReadFile(hVol, rec, sizeof(rec), &numOfBytesRead, 0)){
+		printf("Error %d", GetLastError());
+		return -2;
+	}	
+	
+	baseRec = (MFTBaseRecord *) rec;
+	nextAttr = 0;
+
+	for (i = 0; i < sizeof(baseRec->signatureF); i++) {
+		if (tempName[i] != baseRec->signatureF[i]) flForExit = 1;
+	}
+
+	if (flForExit == 1 && baseRec->flags != 0) 
+		break;
+	else flForExit = 0;
+
+		if (baseRec->flags == MFT_RECORD_NOT_USED) {
+			k++;
+			do{
+	
+				//memcpy(&attr, rec + (baseRec->attrOffset + nextAttr), sizeof(NTFSAttr));
+				if (baseRec->attrOffset + nextAttr > baseRec->recordSize) break;
+				attr = (NTFSAttr *)(rec + baseRec->attrOffset + nextAttr);
+				switch(attr->type) {
+				case 0x00: { flForAttr = 0; break; }
+				case 0x10: break; 
+				case 0x20: break;
+		
+				case 0x30: {
+
+					/* Если атрибут резидентный */
+					//if (attr.nonResFlag == 0) {}
+					//memcpy(&fileName, &rec[baseRec->attrOffset + nextAttr + attr.nameOffset], sizeof(FileName));
+					fileName = (FileName *)(rec + baseRec->attrOffset + nextAttr + attr->nameOffset);
+					lengthName = (attr->size - attr->nameOffset - ( sizeof(FileName) - MAX_PATH)) / 2;
+					if (lengthName > MAX_PATH) break;
+
+					if (!(temp = (delFileInfoMFT*)malloc(sizeof(delFileInfoMFT))))
+						return -4;
+
+					if (flForOutput < 10) printf("File Name: ");
+					for (i = 0; i < lengthName; i++) {
+						if (flForOutput < 10) 
+							printf("%c", fileName->fileName[i]);
+
+						
+						temp->fileName[i] = fileName->fileName[i];
+						}
+
+					if (flForOutput < 10) printf("\nParentDirectory: %s \n", getFullPath(hVol, fileName->baseParentDir));
+
+					flForOutput++;
+
+					temp->fileNameLen = lengthName;
+					temp->parentFileReferenceNumber = fileName->baseParentDir;
+
+					if (curr == NULL) {
+						temp->next = *begin;
+						*begin = temp;
+						curr = *begin;
+					}
+					else {
+						curr->next = temp;
+						temp->next = NULL;
+						curr = curr->next;
+					}
+				}
+
+				case 0x40: break;
+				case 0x50: break;
+				case 0x60: break;
+				case 0x70: break;
+				case 0x80: break;
+				case 0x90: break;
+				case 0xA0: break;
+				case 0xB0: break;
+				case 0xC0: break;
+				case 0xD0: break;
+				case 0xE0: break;
+				case 0xF0: break;
+				case 0x100: break;
+				case 0xFFFFFFFFFFFFFFFF: { flForAttr = 0; break; }
+									
+				default: break;
+				}
+		
+				nextAttr += attr->size;
+
+			}while(flForAttr);
+		}
+	
+	flForAttr = 1;
+	}
+
+	return 0;
+}

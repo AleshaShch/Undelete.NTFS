@@ -29,7 +29,7 @@ typedef struct NTFSDrive {
 typedef struct BIOS_PARAMETER_BLOCK {
 	WORD bPerSector;
 	BYTE sectorPerCluster;
-	WORD reserverS;
+	WORD reservedLAS;
 	BYTE always0_1[3];
 	WORD notUsedByNTFS1;
 	BYTE mediaDescr;
@@ -49,19 +49,19 @@ typedef struct BIOS_PARAMETER_BLOCK {
 	BYTE notUsedByNTFS5[3];
 	LARGE_INTEGER volumeSerialNum;
 	DWORD checkSum;
-}BIOS_PARAMETER_BLOCK;
+}BiosParameterBlock;
 
 /* —труктура описывает загрузочный сектор тома, использующего файловую систему NTFS */
 typedef struct NTFS_BS {
 	TCHAR jumpInstr[3];
 	TCHAR oem_ID[8];
-	BIOS_PARAMETER_BLOCK bpb;
+	BiosParameterBlock bpb;
 	BYTE bootstrapCode[426];
 	WORD endOfSectorMarker;
 }NTFS_BS;
 
-NTFSDrive init(NTFSDrive entrie, HANDLE drive, LARGE_INTEGER offset);
-int isNTFS(NTFSDrive &entrie);
+NTFSDrive init(NTFSDrive , HANDLE , LARGE_INTEGER );
+int isNTFS(NTFSDrive &);
 int findDriveLetterForVolume(NTFSDrive &);
 int getInfoAboutVolume(NTFSDrive );
 

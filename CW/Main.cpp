@@ -51,27 +51,21 @@ int main(int argc, char **argv) {
 	for (i = 0; logicalDrive[i].driveLetter != driveLetter[0] && logicalDrive[i].NTFS == 1; i++);
 	if (logicalDrive[i].NTFS != 1) {
 		printf("Incorrect drive letter");
+		system("pause");
 		return -1;
 	}
 	else getInfoAboutVolume(logicalDrive[i]);
 	
 	printf("\n");
-	delFileInfoUsn *head;
-	head = NULL;
-	readUSNJournal(logicalDrive[i], &head);
+	delFileInfoUsn *lstUSN;
+	lstUSN = NULL;
+	readUSNJournal(logicalDrive[i], &lstUSN);
 	
+	printf("\n");
+	delFileInfoMFT *lstMFT;
+	lstMFT = NULL;
+	readMFTRecord(logicalDrive[i], &lstMFT);
+
+	system("pause");
 	return 0;
 }
-
-
-	
-
-
-
-
-
-
-
-
-	/* ¬ документации Windows говоритс€, что дл€ файлов метаданных файловой системы отводитс€ только первые 16 записей, но на практике выделение записей пользовател€м
-	начинаетс€ с записи 24. */

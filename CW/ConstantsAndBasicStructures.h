@@ -9,10 +9,11 @@
 
 #define SIZE_OF_SECTOR 512
 #define NUM_OF_ENTRIES 128
+#define SIZE_OF_REC 1024
 
 #define FULL_PATH 1024
 
-enum ConsoleColor {
+enum CONSOLE_COLOR{
 	black = 0,
 	blue = 1,
 	green = 2,

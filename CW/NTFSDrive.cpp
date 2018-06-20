@@ -17,6 +17,8 @@ int isNTFS(NTFSDrive &entrie) {
 	BIOS_PARAMETER_BLOCK *biosBlock;
 	LARGE_INTEGER bPerCluster, offsetMFT;
 	BYTE rec[1024];
+	/* Данные в структру BIOS_PARAMETER_BLOCK в таком виде заносятся некорректно. Лишь некоторый поля содержат верную информацию */  
+	LARGE_INTEGER *tempSize, *tempMFToffset, *tempVolumeNum;
 
 	DWORD dwPtr = SetFilePointer(entrie.hDrive, entrie.driveOffset.LowPart, &entrie.driveOffset.HighPart, FILE_BEGIN);
 	if (dwPtr == INVALID_SET_FILE_POINTER) {
@@ -27,9 +29,7 @@ int isNTFS(NTFSDrive &entrie) {
 	
 	ReadFile(entrie.hDrive, sector, sizeof(sector), &numOfBytesRead, 0);
 
-	/* Данные в структру BIOS_PARAMETER_BLOCK в таком виде заносятся некорректно. Лишь некоторый поля содержат верную информацию */  
-	LARGE_INTEGER *tempSize, *tempMFToffset, *tempVolumeNum;
-
+	/* Данные в структру BIOS_PARAMETER_BLOCK в таком виде заносятся некорректно. Лишь некоторый поля содержат верную информацию */
 	bs = (NTFS_BS*)sector; 
 	biosBlock = (BIOS_PARAMETER_BLOCK*)(sector + 0x0B);
 
@@ -50,38 +50,8 @@ int isNTFS(NTFSDrive &entrie) {
 	bPerCluster.QuadPart = biosBlock->bPerSector * biosBlock->sectorPerCluster;
 	offsetMFT.QuadPart = entrie.startClusterOfMFT.QuadPart * bPerCluster.QuadPart;
 	entrie.volumeOffsetOfMFT = offsetMFT;
-	offsetMFT.QuadPart += entrie.driveOffset.QuadPart;
-
-	DWORD dwPtr1 = SetFilePointer(entrie.hDrive, offsetMFT.LowPart, &offsetMFT.HighPart, FILE_BEGIN);
-	if (dwPtr1 == INVALID_SET_FILE_POINTER) {
-		entrie.NTFS = 0;
-		printf("Error %d", GetLastError());
-		return -1;
-	}
 	
 	findDriveLetterForVolume(entrie);
-
-	//offsetMFT.QuadPart = volumeInfo.BytesPerCluster * volumeInfo.MftStartLcn.QuadPart;
-	//offsetMFT.QuadPart += entrie.driveOffset.QuadPart;
-
-	//DWORD dwPtr1 = SetFilePointer(entrie.hDrive, offsetMFT.LowPart, &offsetMFT.HighPart, FILE_BEGIN);
-	//if (dwPtr1 == INVALID_SET_FILE_POINTER) {
-	//	entrie.NTFS = 0;
-	//	printf("Error %d", GetLastError());
-	//	return entrie;
-	//}
-	//
-	//if(!ReadFile(entrie.hDrive, rec, sizeof(rec), &numOfBytesRead, 0)){
-	//	printf("Error %d", GetLastError());
-	//	//return -1;
-	//}
-
-	//MFTBaseRecord *baseRec;
-	//baseRec = (MFTBaseRecord *) rec;
-	//
-	//ReadFile(entrie.hDrive, rec, sizeof(rec), &numOfBytesRead, 0);
-	//ReadFile(entrie.hDrive, rec, sizeof(rec), &numOfBytesRead, 0);
-	//ReadFile(entrie.hDrive, rec, sizeof(rec), &numOfBytesRead, 0);
 
 	return 0;
 }

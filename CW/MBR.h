@@ -35,17 +35,6 @@ typedef struct {
 	DWORD numberOfSectors;
 }PartitionMBR;
 
-typedef struct {
-	WORD firstCylinder;
-	WORD firshHead;
-	WORD firstSector;
-	DWORD numberOfSectors;
-	WORD type; //?
-	DWORD absoluteNumberOfSector;
-	DWORD NTRelativeSector;
-	DWORD bytesPerSector;
-}DrivePartitionInfo;
-
 int scanPhysicalDrive(NTFSDrive *);
 
 #endif
