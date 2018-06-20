@@ -19,7 +19,22 @@
 #define FAT32_WITH_CHS 0x0B
 #define FAT32_WITH_LBA 0x0C
 #define FAT16B_WITH_LBA 0x0E
-#define EXTENDED_PARTITION_WITH_LBA	0x0F
+#define EXTENDED_PARTITION_WITH_LBA	0x0F  
+
+/* typedef enum {
+	EMPTY_PARTITON  = 0x00,
+	FAT12 = 0x01,
+	XENIX_ROOT = 0x02,
+	XENIX_USR = 0x03,
+	FAT16 = 0x04,
+	EXTENDED_PARTITION_WITH_CHS = 0x05,
+	FAT16B = 0x06,
+	NTFS_OR_IFS_OR_HPPS_OR_exFAT = 0x07,
+	FAT32_WITH_CHS = 0x0B,
+	FAT32_WITH_LBA = 0x0C,
+	FAT16B_WITH_LBA = 0x0E,
+	EXTENDED_PARTITION_WITH_LBA	= 0x0F
+}PARTITION_ID; */
 
 /* Структура, которая описывает раздел жёсткого диска */
 typedef struct {

@@ -16,8 +16,7 @@ int isNTFS(NTFSDrive &entrie) {
 	NTFS_BS *bs; 
 	BIOS_PARAMETER_BLOCK *biosBlock;
 	LARGE_INTEGER bPerCluster, offsetMFT;
-	BYTE rec[1024];
-	/* Данные в структру BIOS_PARAMETER_BLOCK в таком виде заносятся некорректно. Лишь некоторый поля содержат верную информацию */  
+	BYTE rec[1024];  
 	LARGE_INTEGER *tempSize, *tempMFToffset, *tempVolumeNum;
 
 	DWORD dwPtr = SetFilePointer(entrie.hDrive, entrie.driveOffset.LowPart, &entrie.driveOffset.HighPart, FILE_BEGIN);
@@ -83,7 +82,7 @@ int findDriveLetterForVolume(NTFSDrive &entrie) {
 		if (volumeInfo.VolumeSerialNumber.QuadPart == entrie.volumeSerialNum.QuadPart) entrie.driveLetter = letter; 
 
 	}
-
+	
 	return 0;
 }
 

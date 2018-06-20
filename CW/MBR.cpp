@@ -2,7 +2,7 @@
 
 int scanPhysicalDrive(NTFSDrive *logicalDrive) {
 	char driveName[MAX_PATH];
-	int i, j, k, l, count, n = 0;
+	int i, j, k, l, count, n = 0, flForOutput = 1;
 	int flForLBA = 0;
 	BYTE sector[SIZE_OF_SECTOR];
 	int numOfPartition;
@@ -79,7 +79,7 @@ int scanPhysicalDrive(NTFSDrive *logicalDrive) {
 					tempName[k/2] = 0;
 
 					tempOffset.QuadPart = partEntrGPT->firstLBA * 512; 
-					if (tempOffset.HighPart == 0) printf(". Offset - %d mB\n",tempOffset.QuadPart/(1024*1024));
+					if (tempOffset.HighPart == 0) printf(". Offset - %d MB\n",tempOffset.QuadPart/(1024*1024));
 					else printf(". Offset - %d GB\n",tempOffset.QuadPart/(1024*1024*1024));
 							
 					/* ѕоиск логического диска. ≈сли он найден, инициализируетс€ структура, описывающа€ такой диск. */
@@ -93,13 +93,45 @@ int scanPhysicalDrive(NTFSDrive *logicalDrive) {
 				}
 			}
 		}
-		else for (i = 0; i < 4; i++) {
-			//drivePartition.firstCylinder = partitionTable -> firstCylinder;
-			//drivePartition.firshHead = partitionTable -> firstHead;
-			//drivePartition.firstSector = partitionTable -> firstSector;
-			//drivePartition.numberOfSectors = partitionTable ->numberOfSectors;  
-			//partitionTable++;
-		//}	
+		else {
+			if (flForOutput) { printf("Computer use MBR\n"); flForOutput = 0;}
+			printf("Hard disk %d:\n", i);
+			for (j = 0; j < 4; j++) {
+				if (partitionRecMBR->numberOfSectors == 0) break;
+
+				if (partitionRecMBR->bootInd == 0x80) printf("Partition %d is boot partition. ", count);
+				else printf("Partition %d. ", n);
+
+				switch(partitionRecMBR->partitionID) {
+				
+				case EMPTY_PARTITON: { printf("Empty Partitiom. "); break; }
+				case FAT12: { printf("FAT12. "); break; }
+				case XENIX_ROOT:{printf("Xenix root. "); break;}
+				case XENIX_USR: { printf("Xenix user. "); break; }
+				case FAT16: { printf("FAT16. "); break; }
+				case EXTENDED_PARTITION_WITH_CHS: { printf("Extended partition with CHS. "); break; }
+				case FAT16B: { printf("FAT16B. "); break; }
+				case NTFS_OR_IFS_OR_HPPS_OR_exFAT: { printf("NTFS or IFS or HPPS or exFAT. "); break; }
+				case FAT32_WITH_CHS: { printf("FAT32 with CHS. "); break; }
+				case FAT32_WITH_LBA: { printf("FAT32 with LBA. "); break; }
+				case FAT16B_WITH_LBA: { printf("FAT16B with LBA. "); break; }
+				case EXTENDED_PARTITION_WITH_LBA: { printf("Extended partition with LBA. "); break; }
+
+				default: break;
+				}
+				tempOffset.QuadPart = partitionRecMBR->absoluteNumberOfSector * SIZE_OF_SECTOR;
+				if (tempOffset.HighPart == 0) printf("Offset - %d Mb \n", tempOffset.QuadPart/(M_BYTES));
+				else printf("Offset - %d GB \n", tempOffset.QuadPart / (K_BYTES * M_BYTES));
+				
+				if(partitionRecMBR->partitionID == NTFS_OR_IFS_OR_HPPS_OR_exFAT)
+					logicalDrive[n - 1] = init(logicalDrive[n++], hDrive, tempOffset);
+
+				isNTFS(logicalDrive[n - 1]);
+				
+				partitionRecMBR++;
+				count++;
+			}
 		}
 	}
+	return 0;
 }
